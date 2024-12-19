@@ -108,10 +108,12 @@ def validate_adb():
 def push_files(pc_path, phone_path, files, must_exist=False):
     for file in files:
         pc_file_path = os.path.join(pc_path, file)
+        phone_file_path = path_join_adb(phone_path, file)
         if os.path.exists(pc_file_path):
             print(f"Pushing {file} to the phone...")
             subprocess.run(["adb", "shell", "mkdir", "-p", phone_path], check=True)
             subprocess.run(["adb", "push", pc_file_path, phone_path], check=True)
+            subprocess.run(["adb", "shell", "chmod", "660", phone_file_path], check=True)
             print(f"Successfully pushed {file}.")
         else:
             if must_exist:
@@ -164,6 +166,7 @@ def copy_runs_directory(runs_pc_dir, runs_phone_dir, timezone_offset_hours, dire
 
                 phone_file_path = path_join_adb(char_folder_phone, file_name)
                 subprocess.run(["adb", "push", temp_file_path, phone_file_path], check=True)
+                subprocess.run(["adb", "shell", "chmod", "660", phone_file_path], check=True)
 
     else:
         print(f"Copying 'runs' directory from phone to PC...")
